@@ -1,4 +1,5 @@
 const Course = require('../models/Course');
+const Category = require('../models/Category');
 
 const createCourse = async (req, res) => {
   try {
@@ -10,28 +11,55 @@ const createCourse = async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      error
+      error,
     });
   }
 };
 
 const getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find({});
+    const categorySlug = req.query.category;
 
-    res.status(200).render('courses',{
+    const category = await Category.findOne({ slug: categorySlug });
+
+    let filter = {};
+
+    if (categorySlug) {
+      filter = { category: category._id };
+    }
+
+    const courses = await Course.find(filter);
+    const categories = await Category.find({});
+
+    res.status(200).render('courses', {
       courses,
-      page_name: 'courses'
-    })
+      categories,
+      page_name: 'courses',
+    });
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      error
+      error,
     });
   }
 };
 
+const getCourse = async (req, res) => {
+  try {
+    const course = await Course.findOne({ slug: req.params.slug });
+    res.status(200).render('course', {
+      course,
+      page_name: 'courses',
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error,
+    });
+  }
+};
 module.exports = {
   createCourse,
   getAllCourses,
+  getCourse,
 };
