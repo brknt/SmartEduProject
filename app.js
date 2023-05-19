@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const pageRoute = require('./routes/pageRoute');
 const courseRoute = require('./routes/courseRoute');
 const categoryRoute = require('./routes/categoryRoute');
+const userRoute = require('./routes/userRoute');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use(express.json()) // for parsing application/json
 app.use('/', pageRoute.routes);
 app.use('/courses', courseRoute.routes);
 app.use('/categories', categoryRoute.routes);
+app.use('/users', userRoute.routes);
 
 
 
