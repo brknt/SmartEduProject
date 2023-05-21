@@ -27,7 +27,9 @@ const loginUser = async (req, res) => {
       
         if (same) {
           // USER SESSION
-          res.status(200).send('YOU ARE LOGGED IN');
+          // hangi userın giriş işlemi yaptığını bulalım:
+          req.session.userID = user._id;
+          res.status(200).redirect('/');
         }
       });
     }
@@ -39,7 +41,14 @@ const loginUser = async (req, res) => {
   }
 };
 
+const logoutUser = (req, res) =>{
+  req.session.destroy(()=>{
+    res.redirect('/');
+  })
+}
+
 module.exports = {
   createUser,
   loginUser,
+  logoutUser
 };
