@@ -1,13 +1,11 @@
 const User = require('../models/User');
+const Category = require('../models/Category');
 const bcrypt = require('bcrypt');
 
 const createUser = async (req, res) => {
   try {
     const user = await User.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      user,
-    });
+    res.status(201).redirect('/login');
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -24,8 +22,6 @@ const loginUser = async (req, res) => {
 
     if (user) {
       bcrypt.compare(password, user.password, (err, same) => {
-        console.log(same);
-
         if (same) {
           // USER SESSION
           // hangi userın giriş işlemi yaptığını bulalım:
@@ -51,9 +47,11 @@ const logoutUser = (req, res) => {
 
 const getDashboardPage = async(req, res) => {
   const user = await User.findOne({_id:req.session.userID});
+  const categories = await Category.find();
   res.status(200).render('dashboard', {
     page_name: 'dashboard',
-    user
+    user,
+    categories
   });
 };
 
