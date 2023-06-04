@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
+const methodOverride = require('method-override');
 
 const pageRoute = require('./routes/pageRoute');
 const courseRoute = require('./routes/courseRoute');
@@ -10,9 +11,6 @@ const categoryRoute = require('./routes/categoryRoute');
 const userRoute = require('./routes/userRoute');
 
 const app = express();
-
-
-
 
 //CONNECT DB
 mongoose
@@ -27,8 +25,6 @@ mongoose
     console.log(err);
   });
 
-
-
 // TEMPLATE ENGINE
 app.set('view engine', 'ejs');
 
@@ -36,6 +32,7 @@ app.set('view engine', 'ejs');
 
 // GLOBAL VARİABLE
 global.userIN = null;
+
 
 
 
@@ -49,19 +46,27 @@ app.use(
     secret: 'mysecret-key',
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: 'mongodb://localhost/smartedu-db' })
+    store: MongoStore.create({ mongoUrl: 'mongodb://localhost/smartedu-db' }),
   })
 );
 app.use(flash());
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
   res.locals.flashMessages = req.flash(); // flashMessages değişkenini oluşturma sebebimiz ilgili templatede kullanabilmemiz için.
   next();
 });
+app.use(
+  methodOverride('_method', {
+    methods: ['POST', 'GET'],
+  })
+);
 
 
 
 
-app.use('*',(req,res,next)=>{
+
+
+
+app.use('*', (req, res, next) => {
   userIN = req.session.userID;
   next();
 });
